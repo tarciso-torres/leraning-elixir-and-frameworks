@@ -17,8 +17,8 @@ defmodule Student do
     * Student.firs_name(joao)
     * "João"
     """
-    def first_name(name) do
-        name
+    def first_name(student) do
+        student.name
         |> String.split
         |> List.first
     end
@@ -35,8 +35,8 @@ defmodule Student do
     * Student.firs_name(joao)
     * "Joaquim"
     """
-    def last_name(name) do
-        name
+    def last_name(student) do
+        student.name
         |> String.split
         |> List.last
     end
