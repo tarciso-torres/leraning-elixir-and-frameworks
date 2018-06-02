@@ -1,23 +1,17 @@
-defmodule App.Weather do
+defmodule App.SimpleWeather do
 
     def start(cities) do
-        # Cria um processo da função manager inicializando com
-        # uma lista vazia e o total de cidades.
-
-        # O manager fica "segurando" o estado da lista vazia e do total de cidades.
-
-        # __MODULE__ se refere ao próprio módulo em que estamos no momento.
-
-        manager_pid = spawn(__MODULE__, :manager, [[], Enum.count(cities)])
-
-        # Percorre a lista de cidades e cria um processo para cada uma com a função get_temperature().
-
-        #Envia uma mensagem para este processo passando a cidade e o PID do manager.
-        cities |> Enum.map(fn city -> 
-        pid = spawn(__MODULE__, :get_temperature, [])
-        send pid, {manager_pid, city}
-        end)
+        cities #-> Recebe uma lista de cidades
+        |> Enum.map(&create_task/1) #-> Cria uma Task para cada uma delas
+        |> Enum.map(&Task.await/1) #-> Processa a resposta de cada Task
     end
+
+    defp create_task(city) do
+        #-> Cria uma Task com a temperatura da cidade informada 
+        Task.async(fn -> temperature_of(city) end)
+    end
+
+    #-> Restante do código permanece o mesmo
 
     def get_temperature() do
         # Recebe o PID do manager e a cidade.
@@ -77,7 +71,7 @@ defmodule App.Weather do
         result = get_endpoint(location) |> HTTPoison.get |> parser_response
         case result do
             {:ok, temp} ->
-                "#{location}: #{temp} ºC"
+                "#{location}: #{temp} C"
             :error -> 
                 "#{location} not found"
         end
@@ -96,5 +90,5 @@ defmodule App.Weather do
             rescue
                 _ -> :error
         end
-    end
+    end    
 end
