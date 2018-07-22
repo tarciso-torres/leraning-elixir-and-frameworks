@@ -1,6 +1,8 @@
 defmodule Discuss.User do
     use Discuss.Web, :model
 
+    @derive {Poison.Encoder, only: [:email]}
+
     schema "users" do
         field :email, :string
         field :provider, :string
@@ -15,5 +17,5 @@ defmodule Discuss.User do
         struct
         |> cast(params, [:email, :provider, :token])
         |> validate_required([:email, :provider, :token])
-    end
+      end
 end
